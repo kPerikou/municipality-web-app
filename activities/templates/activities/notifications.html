@@ -1,0 +1,78 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<title>Ειδοποιήσεις</title>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/css/bootstrap.min.css">
+  		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/css/bootstrap.min.css">
+		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+
+		<!-- Css File -->
+
+		<link rel="stylesheet" type="text/css" href="{% static 'activities/css/template.css' %}">
+        <link rel="stylesheet" type="text/css" href="{% static 'activities/css/loading.css' %}"/>
+		<link rel="stylesheet" type="text/css" href="{% static 'activities/css/ldbtn.min.css'%}">
+
+	</head>
+
+	<body>
+
+
+	<div class="grid-container">
+        {% include 'activities/template.html'%}
+
+
+	<div class="item3" style="min-height: 471px;">
+			<div class="main">
+				<div class="container">
+
+			{% if notifications_list %}
+
+							<table align="center">
+								<thead>
+									<tr class="head">
+										<th style="width: 3%"> </th>
+										<th>Περιγραφή</th>
+										<th>Ημερομήνια</th>
+										<th style="width: 3%">  </th>
+									</tr>
+								</thead>
+								<tbody>
+								{% for notification in notifications_list %}
+									<tr class="body" {% if not notification.isShown %} bgcolor="#E8E8E8" {% endif %}>
+										<td><i class="fa fa-bell" style="font-size:19px" width="224" height="224"></i></td>
+										<td><a href="{% url 'show_activity_byNot' activity_id=notification.activityId notification_id=notification.notId %}">{{notification.message}}</a></td>
+										<td>{{ notification.notDate|date:'Y-m-d' }}</td>
+										<td><a href="" class="glyphicon glyphicon-trash" style="font-size:19px; text-decoration: none;" alt="Διαγραφή" title="Διαγραφή" width="224" height="224"></a></td>
+									</tr>
+								{% endfor %}
+								</tbody>
+							</table>
+            {% else %}
+							<div class="alert alert-info center-block" style="width: 100%;" role="alert" style="min-height: 471px;">
+								<p class="text-center">
+								<strong>Δεν έχετε καμία ειδοποίηση.</strong>
+								</p>
+							</div>
+            {% endif %}
+					<p></p>
+					<hr style="height:30pt; visibility:hidden;" />
+				</div>
+			</div>
+		</div>
+
+		{% include 'activities/footer.html'%}
+	</div>
+
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/js/bootstrap.min.js"></script>
+
+	</body>
+</html>

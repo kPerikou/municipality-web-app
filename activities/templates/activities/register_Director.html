@@ -1,0 +1,55 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>SignUp</title>
+  <link rel="stylesheet" type="text/css" href="{%  static 'activities/css/login.css' %}">
+</head>
+
+<body>
+
+
+{% if messageUserExists %}
+		<div id="formFooter">
+		<a>{{ messageUserExists }}</a>
+		</div>
+{% endif %}
+
+
+<div class="btn-group" role="group" aria-label="Basic example">
+  <a href="{% url 'registerDirector' %}" type="button" class="button-selected">Προϊστάμενος Διέυθυνσης</a>
+  <a href="{% url 'registerDept' %}" type="button" class="submit">Προϊστάμενος Τμήματος</a>
+  <a href="{% url 'registerOffice' %}" type="button"class="submit">Υπάλληλος Γραφείου</a>
+</div>
+
+<div class="wrapper fadeInDown">
+  <div id="formContent">
+    <div class="fadeIn first">
+      <img src="https://www.dafni-ymittos.gov.gr/wp-content/uploads/2017/06/logosquare100.png" alt="Image" id="icon" alt="User Icon" style="width:100px; height: 100px;"/>
+    </div>
+    	<form method="POST" action="">
+            {% csrf_token %}
+			    <input type="text" placeholder="Όνομα" name="name" required>
+			    <input type="text" placeholder="Επώνυμο" name="surname" required>
+			    <input type="text" placeholder="Όνομα Χρήστη" name="username" required>
+                <input type="password" placeholder="Κωδικός Χρήστη" name="password" required>
+                <input type="Email"  placeholder="Email" name="email" required>
+
+			  <select type="text" name="direction" required>
+                  <option value="">Διεύθυνση</option>
+                  {% for direction in directions_list %}
+                  <option value="{{direction.directionId}}">{{direction.directionName}}</option>
+                  {% endfor %}
+             </select>
+			  <button type="submit" class="submit">ΕΓΓΡΑΦΗ</button>
+		</form>
+		<div id="formFooter">
+			<a href="{% url 'login' %}" class="underlineHover">Είστε ήδη εγγεγραμμένος/η;</a>
+		</div>
+	</div>
+</div>
+</body>
+</html>

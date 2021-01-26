@@ -1,0 +1,52 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Login</title>
+    <link rel="stylesheet" type="text/css" href="{% static 'activities/css/login.css' %}">
+</head>
+<body>
+
+{%   if message %}
+		<div id="formFooter">
+		<a>{{ message }}</a>
+		</div>
+{% endif %}
+
+<div class="wrapper fadeInDown">
+  <div id="formContent">
+    <div class="fadeIn first">
+      <img src="https://www.dafni-ymittos.gov.gr/wp-content/uploads/2017/06/logosquare100.png" alt="Image" id="icon" alt="User Icon" style="width:100px; height: 100px;"/>
+    </div>
+    <form method='POST' action=''>
+      {% csrf_token %}
+        <input type="text" name="username" id="login" class="fadeIn second" placeholder="Όνομα χρήστη">
+        <input type="password" name="password" id="password" class="fadeIn third" placeholder="Κωδικός">
+      <button type="submit" class="submit" onclick="check(this.form)">ΣΥΝΔΕΣΗ</button>
+    </form>
+    <div id="formFooter">
+      <a href="{% url 'registerDirector' %}" class="underlineHover" href="#">Δεν είστε εγγεγραμμένος/η;</a>
+    </div>
+  </div>
+</div>
+
+<script language="javascript">
+function check(form)
+{
+if(form.login.value!= "" && form.password.value!= ""){
+window.location.href="loginController.jsp";
+}
+else{
+document.getElementById("login").required= true;
+document.getElementById("password").required= true;
+alert( "Παρακαλώ συμπληρώστε όλα τα πεδία" );
+}
+}
+</script>
+<script src="//maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+
+</body>
+</html>

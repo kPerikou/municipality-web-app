@@ -1,0 +1,281 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>ΑΝΑΤΕΘΕΙΣΕΣ ΑΡΜΟΔΙΟΤΗΤΕΣ</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+
+
+     <!-- Css File -->
+    <link rel="stylesheet" type="text/css" href="{% static 'activities/css/template.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'activities/css/ldbtn.min.css'%}">
+    <link rel="stylesheet" type="text/css" href="{% static 'activities/css/loading.css'%}">
+
+    <style>
+		a.iconReference { text-decoration: none; }
+
+		.button-content {
+			text-align: center;
+		}
+
+		#btn-load-more {
+			position: center;
+
+		}
+    </style>
+
+
+    <script>
+        function row(number) {
+            var x = document.getElementById("commentArea"+ number).value;
+            document.getElementById("comment" + number).innerHTML = x;
+        }
+
+        function commentSuccess(message) {
+            alert(message);
+        }
+
+    </script>
+
+    <script>
+		$(document).ready(function(){
+		$("#myInput").on("keyup", function() {
+		var value = $(this).val().toLowerCase();
+		$("#searchTable tr").filter(function() {
+			$(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+			});
+		});
+		});
+    </script>
+
+    <script>
+        function accessMessage(){
+            alert( "Δεν επιτρέπεται η πρόσβαση σε αυτή τη σελίδα." );
+        }
+
+    </script>
+
+
+
+</head>
+
+<body onload="load()">
+	<div class="grid-container">
+        {% include 'activities/template.html'%}
+
+
+            {% if noAccessMessage %}
+                <script>accessMessage();</script>
+            {% endif %}
+
+		<div class="item3" style="min-height: 471px;">
+			<div class="main">
+				<div class="topnav">
+					<div class="search-container">
+						<input type="text" id = "myInput" onkeyup="search()" placeholder="Αναζήτηση" name="search">
+							<button type="submit"><i class="fa fa-search"></i></button>
+					</div>
+				</div>
+
+			<div class="container">
+                {% if activities_list %}
+					<table id = "tableId" align="center">
+						<thead>
+							<tr class= "head">
+								<th style="width:5%"> </th>
+								<th>Τίτλος</th>
+								<th>Ημερομηνία ανάθεσης</th>
+								<th>Προθεσμία</th>
+								<th style="width:10%"> </th>
+								<th style="width:5%"> </th>
+							</tr>
+						</thead>
+
+
+						<tbody id="searchTable">
+                        {% for act in activities_list %}
+                            {% if act.activityId in tasks %}
+
+								<div class="modal fade" id="myModal{{ forloop.counter }}" role="dialog">
+									<div class="modal-dialog modal-sm">
+										<form method ="POST" action="{% url 'sendComment' %}">
+                                            {% csrf_token %}
+											<!-- Modal content-->
+											<div class="modal-content">
+												<div class="modal-header">
+													<button type="button" class="close" data-dismiss="modal">&times;</button>
+													<h4 class="modal-title">Σχόλιο:</h4>
+												</div>
+												<div class="form-group">
+													<div class="modal-body">
+														<input type="text" class="form-control" name="commentArea{{ forloop.counter }}" style="min-width: 100%" placeholder="Αφήστε το σχόλιο σας εδώ" id="commentArea{{ forloop.counter }}"/>
+													</div>
+												</div>
+												<div class="form-group">
+													<input type="hidden" id="activityId" name="activityId" value="{{ act.activityId }}">
+												</div>
+												<div class="form-group">
+													<input type="hidden" id="count" name="count" value="{{ forloop.counter }}">
+												</div>
+												<div class="form-group">
+													<input type="hidden" id="sentBySender" name="sentBySender" value="true">
+												</div>
+												<div class="modal-footer">
+													<button type="submit" onclick="row({{forloop.counter}})" class="submitComment">Υποβολή Σχολίου</button>
+												</div>
+											</div>
+										</form>
+									</div>
+								</div>
+
+
+								<tr class="body" style= "cursor: pointer;">
+									<td align = "center" class="vcenter"><img src="https://img.icons8.com/dotty/80/000000/task-planning.png" width="30" height="30" title="αρμοδιότητα"></td>
+									<td><a href = "{% url 'show_activity' activity_id=act.activityId%}">{{ act.title }}</a></td>
+									<td>{{ act.releaseDate|date:'Y-m-d' }}</td>
+									<td>{{ act.deadline|date:'Y-m-d' }}</td>
+
+                                       {% if act.complete %}
+                                            {% if act.activityId in approvedtasks %}
+                                                    <td></td>
+                                                    <td></td>
+                                            {% else %}
+                                                <td><i>Αναμένεται</i></td>
+                                                <td><i>έγκριση</i></td>
+                                            {% endif %}
+                                       {% else%}
+                                           <td></td>
+                                           <td class="text-center">
+											<div>
+												<a data-toggle="modal" data-target="#myModal{{forloop.counter}}"><span class="fa fa-comments-o" style="font-size:22px; align:center;" alt="Προσθήκη Σχολίου" width="150" height="150"></span></a>
+											</div>
+										</td>
+                                        {% endif %}
+                                </tr>
+                            {% else %}
+                                {% if act.activityId in projects %}
+			                    <tr class="body" style= "cursor: pointer;">
+                                    <td align = "center" class="vcenter"><img src="https://img.icons8.com/dotty/50/000000/project-setup.png" width="30" height="30" title="έργο"></td>
+                                    <td>
+                                        <a href= "{% url 'show_activity' activity_id=act.activityId%}">{{ act.title }}</a>
+                                    </td>
+                                    <td>{{ act.releaseDate|date:'Y-m-d' }}</td>
+                                    <td>{{ act.deadline|date:'Y-m-d' }}</td>
+                                    <td> </td>
+                                    <td> </td>
+                                </tr>
+                                    {% endif %}
+
+                            {% endif %}
+                        {% endfor %}
+                        </tbody>
+					</table>
+
+                    <div class="button-content">
+                        <div class="btn btn-primary ld-over-inverse" id="btn-load-more" onclick="loadMore()">
+                            Φόρτωση Περισσοτέρων
+                        </div>
+                    </div>
+
+                {% else %}
+                    <div class="alert alert-info center-block" style="width: 100%;" role="alert">
+                        <p class="text-center">
+                            <br><strong>Δεν έχετε αναθέσει καμία αρμοδιότητα.</strong>
+                        </p>
+                    </div>
+
+                {% endif %}
+            </div>
+            </div>
+        </div>
+        {% include 'activities/footer.html' %}
+	</div>
+
+<script>
+function load() {
+	var trs = $("#tableId tr");
+	var btnMore = $("#btn-load-more");
+	var x = trs.length;
+	var currentIndex = 5;
+
+	trs.hide();
+	trs.slice(0, 5).show();
+	checkButton();
+
+
+	btnMore.click(function (e) {
+	e.preventDefault();
+	$("#tableId tr").slice(currentIndex, currentIndex + 5).show();
+    currentIndex += 5;
+    checkButton();
+});
+
+function checkButton() {
+    var currentLength = $("#tableId tr:visible").length;
+
+    if (currentLength >= x) {
+        btnMore.hide();
+    } else {
+        btnMore.show();
+    }
+
+
+}
+}
+
+function loadMore() {
+$('.btn').on('click', function() {
+    var $this = $(this);
+	$this.classList.toggle('loading');
+
+    setTimeout(function() {
+       $this.button('reset');
+   }, 4000);
+});
+
+
+var trs = $("#tableId tr");
+var btnMore = $("#btn-load-more");
+var x = trs.length;
+var currentIndex = 5;
+checkButton();
+
+
+btnMore.click(function (e) {
+	e.preventDefault();
+	$("#tableId tr").slice(currentIndex, currentIndex + 5).show();
+    currentIndex += 5;
+    checkButton();
+});
+
+function checkButton() {
+    var currentLength = $("#tableId tr:visible").length;
+
+    if (currentLength >= x) {
+        btnMore.hide();
+    } else {
+        btnMore.show();
+    }
+
+
+}
+}
+
+</script>
+ 		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+		<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/js/bootstrap.min.js"></script>
+
+	</body>
+</html>
+
+
+
+

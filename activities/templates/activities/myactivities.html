@@ -1,0 +1,311 @@
+{% load static %}
+
+
+<DOCTYPE HTML!>
+<html>
+	<head>
+		<title>MyTasks</title>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+		<link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+
+
+		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+		<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
+
+
+        <!-- Css File -->
+		<link rel="stylesheet" type="text/css" href="{% static 'activities/css/template.css' %}">
+		<style>
+		a.iconReference { text-decoration: none; }
+
+		.button-content {
+			text-align: center;
+		}
+
+		#btn-load-more {
+			position: center;
+
+		}
+		</style>
+	</head>
+	<script>
+			function row(number) {
+				var x = document.getElementById("commentArea"+ number).value;
+				document.getElementById("comment" + number).innerHTML = x;
+			}
+
+			function commentSuccess(message) {
+				alert(message);
+			}
+
+		</script>
+
+		<script>
+		$(document).ready(function(){
+		$("#myInput").on("keyup", function() {
+		var value = $(this).val().toLowerCase();
+		$("#searchTable tr").filter(function() {
+			$(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+			});
+		});
+		});
+		</script>
+
+    <script>
+        function accessMessage(){
+            alert( "Δεν επιτρέπεται η πρόσβαση σε αυτή τη σελίδα." );
+        }
+
+    </script>
+
+		<!--BODY-->
+		<body onload="load()">
+
+
+	<div class="grid-container">
+	{% include 'activities/template.html' %}
+        {% if noAccessMessage %}
+                <script>accessMessage();</script>
+            {% endif %}
+        <div class="item3" style="min-height: 471px;">
+            <div class="main">
+                <div class="topnav">
+                    <div class="search-container">
+                        <input type="text" id = "myInput" onkeyup="search()" placeholder="Αναζήτηση" name="search">
+                        <button type="submit"><i class="fa fa-search"></i></button>
+                    </div>
+                </div>
+
+                <div class="container">
+                    {% if myactivities_list %}
+
+                        <!-- Successfull submission modal -->
+                        <div id="submitModal" class="modal fade">
+                            <div class="modal-dialog modal-confirm">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <div class="icon-box">
+                                            <i class="material-icons">&#xE876;</i>
+                                        </div>
+                                        <h4 class="modal-title" style="font-size:20px;"><strong>Η ολοκλήρωση των αρμοδιοτήτων σας υποβλήθηκε επιτυχώς!</strong></h4>
+                                    </div>
+                                    <div class="modal-body">
+                                        <p class="text-center">Σύντομα θα ενημερωθείτε από τον αποστολέα σχετικά με την έγκρισή τους.</p>
+                                    </div>
+
+                                    <div class="modal-footer">
+                                        <button class="btn btn-success btn-block" data-dismiss="modal">OK</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+
+                        <table id = "tableId" align="center">
+                            <thead>
+                            <tr class= "head">
+                                <th style="width:5%">Ολοκληρώθηκε</th>
+                                <th style="text-align: center;">Τίτλος</th>
+                                <th>Προθεσμία</th>
+                                <th>Αποστολέας</th>
+                                <th></th>
+                                <th></th>
+                            </tr>
+                            </thead>
+
+                            <tbody id="searchTable">
+                            {% for task in myactivities_list %}
+
+                                <form method ="POST" action="{% url 'sendComment' %}">
+                                    {% csrf_token %}
+                                    <div class="modal fade" id="myModal{{ forloop.counter }}" role="dialog">
+                                        <div class="modal-dialog modal-sm">
+                                            Modal content
+                                            <div class="modal-content">
+                                                <div class="modal-header">
+                                                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                                                    <h4 class="modal-title">Σχόλιο:</h4>
+                                                </div>
+
+                                                <div class="form-group">
+                                                    <div class="modal-body">
+                                                        <input type="text" class="form-control" name="commentArea{{ forloop.counter }}" style="min-width: 100%" placeholder="Αφήστε το σχόλιο σας εδώ"  id="commentArea{{ forloop.counter }}"/>
+                                                    </div>
+                                                </div>
+
+                                                <div class="form-group">
+                                                    <input type="hidden" id="activityId" name="activityId" value="{{ task.activityId }}">
+                                                </div>
+
+                                                <div class="form-group">
+                                                    <input type="hidden" id="count" name="count" value="{{ forloop.counter }}">
+                                                </div>
+
+                                                <div class="form-group">
+                                                    <input type="hidden" id="sentBySender" name="sentBySender" value="false">
+                                                </div>
+
+                                                <div class="modal-footer">
+                                                    <button type="submit" onClick= "row({{ forloop.counter }})"  class="submitComment">Υποβολή Σχολίου</button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </form>
+
+                                        {% if not task.complete %}
+											<tr class="body">
+												<form method ="POST" action="{% url 'submitTask' task_id=task.activityId%}">
+                                                    {% csrf_token %}
+													<td align = "center" class="vcenter">
+														<input type="hidden" name="selectedTasks" value="{{task.activityId}}"/>
+														<input type="submit" value="Υποβολή"/>
+													</td>
+												</form>
+												<td align="center"><a href="{% url 'show_activity' activity_id=task.activityId%}">{{task.title}}</a>
+												<p style="color: #B6BCB4; font-size:30;" id="comment{{ forloop.counter }}"></p></td>
+												<td>{{ task.deadline|date:'Y-m-d'}}</td>
+                                                {% for employee in emps %}
+                                                    {% if employee.username == task.senderId %}
+												<td>{{employee.name}} {{employee.surname}}</td>
+                                                    {% endif %}
+                                                {% endfor %}
+												<td>
+													{% if usertype == 'deptdirector' %}
+														<span style="font-size:30px" alt="Κατάτμηση Αρμοδιότητας" title="Κατάτμηση Αρμοδιότητας" width="224" height="224"><a class = "iconReference" href ="create_project.jsp?id=<%=task.getId()%>"> &#247;</a></span>
+													{% endif %}
+												</td>
+												<td>
+													<div>
+														<a data-toggle="modal" data-target="#myModal{{ forloop.counter }}"><span class="fa fa-comments-o" style="font-size:22px; align:center;" alt="Προσθήκη Σχολίου" width="150" height="150"></span></a>
+													</div>
+												</td>
+											</tr>
+
+                                        {% elif task.complete and not task.approved %}
+
+												<tr class = "body pending" bgcolor="#F8F8F8">
+													<td align = "center"><img title="Αναμένεται Έγκριση" style = "font-size: 20px" width= "22" height ="22" src="{% static 'activities/image/pending_approval.png'%}" alt="Αναμένεται Έγκριση"></td>
+													<td align="center">
+														<a href="{% url 'show_activity' activity_id=task.activityId%}">{{ task.title }}</a>
+													</td>
+													<td>{{ task.deadline|date:'Y-m-d' }}</td>
+													{% for employee in emps %}
+                                                        {% if employee.username == task.senderId %}
+												            <td>{{employee.name}} {{employee.surname}}</td>
+                                                        {% endif %}
+                                                    {% endfor %}
+													<td></td>
+													<td></td>
+												</tr>
+                                        {% endif %}
+
+                                    {% endfor %}
+									</tbody>
+								</table>
+
+								<div class="button-content">
+									<div class="btn btn-primary ld-over-inverse" id="btn-load-more" onclick="loadMore()">
+										Φόρτωση Περισσοτέρων
+									</div>
+								</div>
+
+								<br style = "line-height:2;">
+								<!--<a class="submit" style="float: right" data-target="#submitModal" data-toggle="modal" style ="cursor:pointer;">Υποβολή</a> -->
+
+
+
+						{% else %}
+							<div class="alert alert-info center-block" style="width: 100%;" role="alert">
+								<p class="text-center">
+								<br>
+								<strong>Δεν εκκρεμεί κάποια αρμοδιότητα προς ολοκλήρωση</strong>
+								</p>
+							</div>
+						{% endif %}
+
+
+
+
+						</div>
+					</div>
+				</div>
+
+	</div>
+	{% include 'activities/footer.html' %}
+
+
+
+	</div>
+
+
+
+<script>
+function load() {
+	var trs = $("#tableId tr");
+	var btnMore = $("#btn-load-more");
+	var x = trs.length;
+	var currentIndex = 6;
+
+	trs.hide();
+	trs.slice(0, 6).show();
+	checkButton();
+
+
+	btnMore.click(function (e) {
+	e.preventDefault();
+	$("#tableId tr").slice(currentIndex, currentIndex + 6).show();
+    currentIndex += 6;
+    checkButton();
+	});
+
+	function checkButton() {
+		var currentLength = $("#tableId tr:visible").length;
+
+		if (currentLength >= x) {
+			btnMore.hide();
+		} else {
+			btnMore.show();
+		}
+	}
+}
+
+function loadMore() {
+	var trs = $("#tableId tr");
+	var btnMore = $("#btn-load-more");
+	var x = trs.length;
+	var currentIndex = 6;
+	checkButton();
+
+
+	btnMore.click(function (e) {
+		e.preventDefault();
+		$("#tableId tr").slice(currentIndex, currentIndex + 6).show();
+		currentIndex += 6;
+		checkButton();
+	});
+
+	function checkButton() {
+		var currentLength = $("#tableId tr:visible").length;
+
+		if (currentLength >= x) {
+			btnMore.hide();
+		} else {
+			btnMore.show();
+		}
+
+    }
+}
+</script>
+
+<script src="https://code.jquery.com/jquery-1.10.1.js" integrity="sha256-663tSdtipgBgyqJXfypOwf9ocmvECGG8Zdl3q+tk+n0=" crossorigin="anonymous"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+</body>
+
+</html>

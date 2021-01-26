@@ -1,0 +1,104 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<title>Δημιουργία Αρμοδιότητας</title>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+
+
+		<!-- Css File -->
+  	    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/css/bootstrap.min.css">
+		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+		<link rel="stylesheet" type="text/css" href="{% static 'activities/css/template.css'%}">
+	  	<script>
+			function dateFunction() {
+				var today = new Date();
+				var dd = today.getDate();
+				var mm = today.getMonth() + 1; //January is 0!
+				var yyyy = today.getFullYear();
+
+				if (dd < 10) {
+					dd = '0' + dd
+				}
+
+				if (mm < 10) {
+					mm = '0' + mm
+				}
+
+				today = yyyy + '-' + mm + '-' + dd;
+				document.getElementById('deadline').setAttribute("min", today);
+			}
+		</script>
+
+	</head>
+
+	<body>
+
+
+		<div class="grid-container">
+            {% include 'activities/template.html'%}
+
+
+		<div class="item3">
+			<div class="main">
+				<div class="container">
+						<br>
+
+						<h2 style="text-align:center">Δημιουργία Αρμοδιότητας</h2>
+						<form method ="POST" action="{% url 'create_task' %}">
+                        {% csrf_token %}
+                            {% if message %}
+                                   <div id="formFooter">
+                                   <div class="alert alert-info" style="text-align: center">
+		                                <a>{{ message }}</a>
+                                   </div>
+		                            </div>
+                                {% endif %}
+						    <div class="form-group col-md-12">
+
+								<label for="title">Τίτλος:</label>
+								<br>
+								<input type="text" class="form-control"  id="title" placeholder="Τίτλος" name="title" required>
+						    </div>
+
+						    <div class="form-group col-md-12">
+								<label for="deadline">Προθεσμία:</label>
+								<input type="date" onclick="dateFunction()" class="form-control" id="deadline" name="date" required>
+							</div>
+
+							<div class="form-group col-md-12">
+								<label for="description">Περιγραφή:</label>
+								<textarea class="form-control" id="description" placeholder="Περιγραφή" name="description" ></textarea>
+							</div>
+
+							<div class="form-group col-md-12">
+								<label for='department'>Αναθέτω την αρμοδιότητα στον υπάλληλο:</label>
+								<select id='department' name='employee_department' class='form-control' required>
+									<!--When the database will be connected, the options will be names-->
+									<option value=''>--- Επιλέξτε έναν υπάληλο ---</option>
+									{% for emp in employees_list %}
+									<option value='{{ emp.username }}'><p>{{emp.name}} {{ emp.surname }}</p></option>
+									{% endfor %}
+
+								</select>
+
+
+
+							</div>
+							<button type ="submit" class="submit" style="float: right">Υποβολή</button>
+						</form>
+				</div>
+			</div>
+		</div>
+
+            {% include 'activities/footer.html'%}
+</div>
+
+	</body>
+
+	<script type="text/javascript" src="https://gc.kis.v2.scr.kaspersky-labs.com/F0A6F7CD-DD9D-304B-9C36-45F02E5D6721/main.js" charset="UTF-8"></script><script type="text/javascript" src="https://gc.kis.v2.scr.kaspersky-labs.com/F0A6F7CD-DD9D-304B-9C36-45F02E5D6721/main.js" charset="UTF-8"></script><script type="text/javascript" src="https://gc.kis.v2.scr.kaspersky-labs.com/F0A6F7CD-DD9D-304B-9C36-45F02E5D6721/main.js" charset="UTF-8"></script><script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/js/bootstrap.min.js"></script>
+</html>

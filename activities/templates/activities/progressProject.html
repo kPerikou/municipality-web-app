@@ -1,0 +1,151 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<title>Πορεία έργου</title>
+
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+		<link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+
+		<!-- Css File -->
+		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+		<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+		<link rel="stylesheet" type="text/css" href="{% static 'activities/css/template.css' %}">
+
+
+        	<script>
+			function row(number) {
+				var x = document.getElementById("commentArea"+ number).value;
+				document.getElementById("comment" + number).innerHTML = x;
+			}
+
+			function commentSuccess(message) {
+				alert(message);
+			}
+
+		</script>
+	</head>
+
+	<body>
+
+
+		<div class="grid-container">
+		{%  include 'activities/template.html'%}
+
+
+		<div class="item3">
+			<div class="main">
+
+				<div class="topnav">
+					<div class="search-container">
+						<input type="text" id = "myInput" onkeyup="search()" placeholder="Αναζήτηση" name="search">
+						<button type="submit"><i class="fa fa-search"></i></button>
+					</div>
+				</div>
+
+				<div class="container">
+					<div class="card">
+						<div class="card-header" style= "text-align:center;">
+							<strong>Πορεία διεκπεραίωσης</strong>
+						</div>
+
+						<div class="card-body">
+							<div class="card-title" style= "text-align:center;">
+								{{ activity.title }}
+							</div>
+
+							<p class="card-text">
+							<table align="center" style="margin-bottom: 60px;">
+										<thead>
+											<tr class= "head">
+												<th>Αρμοδιότητες</th>
+												<th>Προθεσμία</th>
+												<th style="width: 5%;"> Ολοκληρώθηκε</th>
+												<th style="width:5%"></th>
+											</tr>
+										</thead>
+
+										<tbody>
+
+
+
+
+                                        {% for task in tasksProject %}
+
+
+										<!--Modal-->
+										<form method ="POST" action="{% url 'sendComment' %}">
+                                        {% csrf_token %}
+											<div class="modal fade" id="myModal{{ forloop.counter }}" role="dialog">
+												<div class="modal-dialog modal-sm">
+														<!-- Modal content-->
+														<div class="modal-content">
+															<div class="modal-header">
+																<button type="button" class="close" data-dismiss="modal">&times;</button>
+																<h4 class="modal-title">Σχόλιο:</h4>
+															</div>
+															<div class="form-group">
+																<div class="modal-body">
+																	<input type="text" class="form-control" name="commentArea{{forloop.counter}}" style="min-width: 100%" placeholder="Αφήστε το σχόλιο σας εδώ"  id="commentArea{{ forloop.counter }}"/>
+																</div>
+															</div>
+															<div class="form-group">
+																<input type="hidden" id="activityId" name="activityId" value="{{ task.activityId }}">
+															</div>
+															<div class="form-group">
+																<input type="hidden" id="count" name="count" value="{{ forloop.counter }}">
+															</div>
+															<div class="form-group">
+																<input type="hidden" id="sentBySender" name="sentBySender" value="true">
+															</div>
+															<div class="modal-footer">
+																<button type="submit" onClick= "row({{ forloop.counter }})"  class="submitComment">Υποβολή Σχολίου</button>
+															</div>
+														</div>
+												</div>
+											</div>
+										</form>
+											<tr class="body" style= "cursor: pointer;">
+                                                <td><a href = "{% url 'show_activity' activity_id=task.activityId%}">{{ task.title }}</a></td>
+												<td>{{ task.deadline|date:'Y-m-d' }}</td>
+												<td style="text-align: center;">
+												{% if task.approved %}
+													<img src="https://img.icons8.com/office/30/000000/checkmark.png">
+												{% elif task.complete %}
+													Αναμένεται έγκριση
+												{% else %}
+                                                    Όχι
+                                                {% endif %}
+												</td>
+												<td>
+                                                    {% if not task.complete and not task.approved %}
+                                                        <div>
+													    <a data-toggle="modal" data-target="#myModal{{ forloop.counter }}"><span class="fa fa-comments-o" style="font-size:22px; align:center;" alt="Προσθήκη Σχολίου" width="150" height="150"></span></a>
+												        </div>
+                                                    {% endif %}
+                                                </td>
+											</tr>
+
+									{% endfor %}
+
+										</tbody>
+							</table>
+							</p>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+
+	{%  include 'activities/footer.html'%}
+	</div>
+
+
+	</body>
+</html>

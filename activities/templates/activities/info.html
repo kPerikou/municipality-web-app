@@ -1,0 +1,82 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<title>Τα στοιχεία μου</title>
+
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+		<link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+
+		<!-- Css File -->
+		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+		<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+		<link rel="stylesheet" type="text/css" href="{% static 'activities/css/template.css' %}">
+	</head>
+
+	<body>
+
+		<div class="grid-container">
+			{% include 'activities/template.html'%}
+			<div class="item3" style="min-height: 474px;">
+				<div class="container">
+					<div class="card">
+
+						<div class="card-header" style= "text-align:center;">
+							<img src="{% static 'activities/image/logo-dafni.png' %}" alt="logo" style= "width:80px;">
+						</div>
+						<div class="card-body">
+							<div class="card-title">
+								<strong>Τα στοιχεία μου</strong>
+							</div>
+
+							<p class="card-text">
+								<ul class="list-unstyled">
+									<li><b>Ονοματεπώνυμο: </b> {{ userinfo.name }} {{ userinfo.surname }}<br></li>
+									<li><b>Όνομα χρήστη: </b> {{ userinfo.username }}<br></li>
+									<li><b>Ηλεκτρονική Διεύθυνση: </b> {{ userinfo.email }}<br></li>
+
+                                    {% for d in directions %}
+                                        {% if d.directionId == userinfo.direction %}
+									<li><b>Διεύθυνση: </b> {{ d.directionName }}<br></li>
+                                        {% endif %}
+                                    {% endfor %}
+
+									{% if usertype == 'officeclerk' %}
+                                        {% for dep in departments %}
+                                            {% if dep.departmentId == userinfo.department %}
+										<li><b>Τμήμα: </b> {{ dep.departmentName }}<br></li>
+                                            {% endif %}
+                                        {% endfor %}
+
+                                        {% for office in offices %}
+                                            {% if office.officeId == userinfo.office %}
+										<li><b>Γραφείο: </b> {{ office.officeName }}<br></li>
+                                            {% endif %}
+                                        {% endfor %}
+
+									{% elif usertype == 'deptdirector' %}
+                                         {% for dep in departments %}
+                                            {% if dep.departmentId == userinfo.department %}
+										<li><b>Τμήμα: </b> {{ dep.departmentName }} <br></li>
+                                                {% endif %}
+                                        {% endfor %}
+									{% endif %}
+								</ul>
+							</p>
+						</div>
+					</div>
+					</div>
+				</div>
+			</div>
+			{% include 'activities/footer.html'%}
+
+
+
+	</body>
+<html>

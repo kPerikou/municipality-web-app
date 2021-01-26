@@ -1,0 +1,105 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+
+    <link rel="stylesheet" type="text/css" href="{% static 'activities/css/template.css' %}">
+</head>
+
+	<div class ="item1">
+		<nav class="navbar navbar-inverse">
+			<div class="container-fluid">
+				<div class="navbar-header">
+					<a class="navbar-brand" href="#" style="font-size: 15px;"><span>Δήμος Δάφνης-Υμηττού</span></a>
+				</div>
+				<ul class="nav navbar-nav" id="navbar">
+
+                    {% if usertype != 'director' %}
+					<li class="{% if navbar == 'myactivities' %}active{% endif %}">
+						<a href="{% url 'myactivities' %}" class="notification" >
+						<span class="active">ΑΡΜΟΔΙΟΤΗΤΕΣ</span>
+                            {% if notCompletedTasks %}
+						        <span class="badge">{{ notCompletedTasks|length }}</span>
+                            {% endif %}
+						</a>
+					</li>
+                    {% endif %}
+
+                    {% if usertype != 'officeclerk' %}
+					<li class="{% if navbar == 'createactivity' %}active{% endif %}">
+						<a href="{% url 'create_activity' %}" class="notification" >
+						<span class="active">ΔΗΜΙΟΥΡΓΙΑ ΔΡΑΣΤΗΡΙΟΤΗΤAΣ</span>
+						</a>
+					</li>
+
+
+					<li class="{% if navbar == 'sentactivities' %}active{% endif %}">
+						<a href="{% url 'home' %}" class="notification" >
+							<span class="active">ΑΝΑΤΕΘΕΙΣΕΣ ΑΡΜΟΔΙΟΤΗΤΕΣ</span>
+						</a>
+					</li>
+                    {% endif %}
+
+					<li class="{% if navbar == 'notifications' %}active{% endif %}">
+						<a href="{% url 'notifications' %}" class="notification" >
+						<span>ΕΙΔΟΠΟΙΗΣΕΙΣ</span>
+                            {% if notShownNotifications %}
+						<span class="badge">{{ notShownNotifications|length }}</span>
+                            {% endif %}
+						</a>
+					</li>
+				</ul>
+
+				<ul class="nav navbar-nav navbar-right">
+				  <li><a><span id="dateTime"></span></a></li>
+
+				  <!-- just for media screen -->
+
+					<!-- end of media screen -->
+				</ul>
+			</div>
+		</nav>
+	</div>
+	<!-- side menu  -->
+	<div class="item2">
+		<div class ="menu">
+			<ul>
+				<li><a href="#"><span><img src="{% static 'activities/image/profile3.png' %}" alt="εικόνα προφίλ"/></span>{{ user.name }} {{ user.surname }}</a> </li>
+				<li class="{% if navbar == 'info' %}active{% endif %}"><a href=" {% url 'info' %}">Τα στοιχεία μου</a></li>
+				<li><a href="{% url 'logout' %}"><span class="glyphicon glyphicon-log-out"></span> Αποσύνδεση</a></li>
+			</ul>
+		</div>
+	</div>
+
+
+
+<script>
+
+	document.getElementById("dateTime").innerHTML = formatToGreekDate();
+
+	function formatToGreekDate(){
+		var date = new Date();
+		var dd = date.getDate();
+		var d = date.getDay();
+		var mm = date.getMonth();
+		var yyyy = date.getFullYear();
+
+
+
+		var greekMonths = ['Ιανουαρίου','Φεβρουαρίου','Μαρτίου','Απριλίου','Μαΐου','Ιουνίου','Ιουλίου','Αυγούστου','Σεπτεμβρίου','Οκτωβρίου','Νοεμβρίου','Δεκεμβρίου'];
+		var greekdays = ['Κυριακή', 'Δευτέρα','Τρίτη','Τετάρτη','Πέμπτη','Παρασκευή','Σάββατο'];
+
+		return '' + greekdays[d] + ' ' + dd + ' ' + greekMonths[mm] + ' '+ yyyy + ' ';
+	}
+
+</script>
+
+
+</html>
+
+
+
+
